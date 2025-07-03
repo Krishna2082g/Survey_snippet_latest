@@ -1,0 +1,11 @@
+<odoo>
+  <template id="survey_snippet" name="Interactive Survey">
+    <section class="s_survey_snippet o_colored_level" data-sel-survey-id="0">
+      <div class="container">
+        <div class="survey-content">
+          <p>Loading survey...</p>
+        </div>
+      </div>
+    </section>
+  </template>
+</odoo>

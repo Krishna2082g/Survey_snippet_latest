@@ -1,0 +1,9 @@
+<odoo>
+  <template id="external_snippets" inherit_id="website.snippets" priority="8">
+    <xpath expr="//div[@id='snippet_structure']//t[@t-snippet][last()]" position="after">
+      <t t-snippet="Survey.survey_snippet"
+         data-thumbnail="/Survey/static/description/snippet_thumb.jpg"
+         data-name="Interactive Survey"/>
+    </xpath>
+  </template>
+</odoo>

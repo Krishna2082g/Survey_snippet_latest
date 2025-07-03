@@ -1,0 +1,17 @@
+<odoo>
+    <record id="view_survey_form_inherit_responses" model="ir.ui.view">
+        <field name="name">survey.survey.form.responses.button</field>
+        <field name="model">survey.survey</field>
+        <field name="inherit_id" ref="survey.survey_survey_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="%(survey.action_survey_user_input)d"
+                        string="Responses"
+                        type="action"
+                        class="btn-primary"
+                        context="{'search_default_survey_id': active_id}"
+                        icon="fa-list"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

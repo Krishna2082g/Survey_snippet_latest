@@ -1,0 +1,20 @@
+// Target the survey dropdown in the editor
+we-select[data-attribute="data-sel-survey-id"] {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  align-items: stretch;
+
+  we-button {
+    display: block !important;
+    width: 100% !important;
+    text-align: left;
+    white-space: normal;
+    padding: 6px 10px;
+    border-radius: 4px;
+
+    &:hover {
+      background-color: #f5f5f5;
+    }
+  }
+}

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <template id="survey_snippet_options" inherit_id="website.snippet_options" name="Survey Snippet Options">
+    <xpath expr="." position="inside">
+      <div data-selector=".s_survey_snippet" data-js="SurveySnippetOptions" class="snippet-option">
+        <we-select
+          string="Survey"
+          data-attribute="data-sel-survey-id"
+          data-no-preview="true"
+          class="o_we_vertical"
+        />
+      </div>
+    </xpath>
+  </template>
+</odoo>
