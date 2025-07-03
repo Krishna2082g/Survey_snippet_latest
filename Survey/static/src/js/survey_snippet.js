@@ -40,29 +40,12 @@ odoo.define('Survey.survey_snippet', function (require) {
             this.data = survey.questions;
             this.currentIndex = 0;
             this.answers = {};
-            this.renderSurveyInfo();
-        },
-
-        renderSurveyInfo: function () {
-            this.container.innerHTML = `
-                <div class="mx-auto my-5 p-4 shadow rounded bg-white" style="max-width: 420px;">
-                    <h4 class="mb-3 text-center">${this.selectedSurvey.title}</h4>
-                    <p class="text-muted text-center">${this.selectedSurvey.description || ''}</p>
-                    <p class="text-center text-muted">Questions: ${this.data.length}</p>
-                    <div class="text-center mt-4">
-                        <button class="btn btn-success px-4" id="startSurveyBtn">Start Survey</button>
-                    </div>
-                </div>
-            `;
-
-            this.container.querySelector('#startSurveyBtn').addEventListener('click', () => {
-                this.renderQuestion();
-            });
+            this.renderQuestion();
         },
 
         renderSurveySelector: function (surveys) {
             this.container.innerHTML = `
-                <div class="mx-auto my-5 p-4 shadow rounded bg-white" style="max-width: 420px;">
+                <div class="mx-auto my-5 p-4 shadow rounded bg-white" style="max-width: 800px; width: 100%;">
                     <h5 class="text-center mb-4">Choose a Survey</h5>
                 </div>
             `;
@@ -78,14 +61,10 @@ odoo.define('Survey.survey_snippet', function (require) {
                 select.appendChild(option);
             });
 
-            const button = document.createElement('button');
-            button.className = 'btn btn-primary w-100';
-            button.textContent = 'Start Survey';
-
-            button.addEventListener('click', () => {
+            select.addEventListener('change', () => {
                 const selectedId = parseInt(select.value);
                 const survey = surveys.find(s => s.id === selectedId);
-                if (!survey) return alert('Please select a valid survey.');
+                if (!survey) return;
 
                 this.selectedSurvey = survey;
                 this.data = survey.questions;
@@ -96,14 +75,13 @@ odoo.define('Survey.survey_snippet', function (require) {
 
             const wrapper = this.container.querySelector('div');
             wrapper.appendChild(select);
-            wrapper.appendChild(button);
         },
 
         renderQuestion: function () {
             const question = this.data[this.currentIndex];
 
             this.container.innerHTML = `
-                <div class="mx-auto my-5 p-4 shadow rounded bg-white" style="max-width: 420px;">
+                <div class="mx-auto my-5 p-4 shadow rounded bg-white" style="max-width: 800px; width: 100%;">
                     <h5 class="mb-4">${this.currentIndex + 1}. ${question.text}</h5>
                     <div id="optionsContainer"></div>
                     <div class="d-flex justify-content-between mt-4" id="navButtons"></div>
@@ -120,7 +98,7 @@ odoo.define('Survey.survey_snippet', function (require) {
 
             question.answers.forEach(answer => {
                 const option = document.createElement('div');
-                option.className = 'border rounded p-3 mb-2';
+                option.className = 'border rounded p-3 mb-2 w-100';
                 option.style.cursor = 'pointer';
                 option.style.transition = '0.2s';
                 option.textContent = answer.text;
