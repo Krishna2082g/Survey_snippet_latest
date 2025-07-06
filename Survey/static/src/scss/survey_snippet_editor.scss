@@ -1,20 +1,62 @@
-// Target the survey dropdown in the editor
+// Target the survey dropdown row in the editor (label + dropdown side by side)
 we-select[data-attribute="data-sel-survey-id"] {
   display: flex !important;
-  flex-direction: column !important;
-  gap: 8px !important;
-  align-items: stretch;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  padding: 6px 0;
 
-  we-button {
-    display: block !important;
-    width: 100% !important;
-    text-align: left;
-    white-space: normal;
-    padding: 6px 10px;
-    border-radius: 4px;
-
-    &:hover {
-      background-color: #f5f5f5;
-    }
+  label.survey-dropdown-label {
+    color: #ccc;
+    font-size: 13px;
+    white-space: nowrap;
+    flex: 1;
   }
+
+  select.survey-dropdown {
+    flex: 2;
+    padding: 6px 10px;
+    font-size: 13px;
+    border-radius: 4px;
+    border: 1px solid #555;
+    background-color: #3f3f47; // Light gray for default
+    color: #eee;
+    appearance: none;
+    transition: background-color 0.2s ease;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg width='16' height='16' fill='%23ccc' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 12px;
+    min-width: 140px;
+  }
+
+  select.survey-dropdown:hover {
+    background-color: #2f2f35; // Darker on hover
+  }
+
+  select.survey-dropdown:focus {
+    outline: none;
+    border-color: #888;
+    box-shadow: 0 0 2px #888;
+  }
+}
+
+// Optional: Legacy we-button support (not used for dropdown anymore)
+we-select[data-attribute="data-sel-survey-id"] we-button {
+  display: block !important;
+  width: 100% !important;
+  text-align: left;
+  white-space: normal;
+  padding: 6px 10px;
+  border-radius: 4px;
+
+  &:hover {
+    background-color: #2f2f35;
+  }
+}
+
+.survey-option {
+  background-color: #343a40;
+  color: #fff;
 }

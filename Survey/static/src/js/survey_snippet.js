@@ -188,7 +188,6 @@ odoo.define('Survey.survey_snippet', function (require) {
                             <i class="fa fa-check-circle text-success mb-3" style="font-size: 4rem;"></i>
                             <h4 class="text-success">Thank you!</h4>
                             <p>Your answers have been recorded successfully.</p>
-                            <button class="btn btn-outline-primary mt-3" onclick="location.reload()">Take Another Survey</button>
                         </div>
                     `;
                 } else {

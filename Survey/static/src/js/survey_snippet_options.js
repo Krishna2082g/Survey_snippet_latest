@@ -1,4 +1,3 @@
-// Survey Snippet Options for Editor
 odoo.define('Survey.survey_snippet_options', function (require) {
     'use strict';
 
@@ -7,77 +6,75 @@ odoo.define('Survey.survey_snippet_options', function (require) {
 
     options.registry.SurveySnippetOptions = options.Class.extend({
         start() {
-            console.log('SurveySnippetOptions: start called');
             return this._super(...arguments).then(() => {
-                this._injectSurveyButtons();
+                this._injectSurveyDropdown();
             });
         },
 
-        async _injectSurveyButtons() {
+        async _injectSurveyDropdown() {
             try {
                 const surveys = await ajax.jsonRpc('/survey_snippet/list', 'call', {});
-                console.log('Fetched surveys:', surveys);
-
-                const selectEl = this.el.querySelector('we-select[data-attribute="data-sel-survey-id"]');
-                if (!selectEl) {
-                    console.warn('❌ <we-select> element not found.');
+                const selectWrapper = this.el.querySelector('we-select[data-attribute="data-sel-survey-id"]');
+                if (!selectWrapper) {
+                    console.warn('❌ <we-select> not found.');
                     return;
                 }
 
-                selectEl.classList.add('o_we_vertical', 'survey-select-wrapper');
-                selectEl.innerHTML = '';
+                // Clear previous
+                selectWrapper.innerHTML = '';
+                selectWrapper.classList.add('o_we_snippet_option', 'survey-option-row');
 
-                // Default Button
-                const defaultBtn = document.createElement('we-button');
-                defaultBtn.setAttribute('data-value', '');
-                defaultBtn.textContent = 'Select a survey';
-                defaultBtn.classList.add('survey-option-btn', 'survey-default-btn');
-                selectEl.appendChild(defaultBtn);
+                // Create label
+                const label = document.createElement('label');
+                label.textContent = 'Select Survey';
+                label.classList.add('survey-dropdown-label');
 
-                // Add survey buttons
+                // Create dropdown
+                const selectEl = document.createElement('select');
+                selectEl.classList.add('survey-dropdown');
+                selectEl.style.backgroundColor = '#595964';
+
+                // Add placeholder (not in list)
+                const placeholder = document.createElement('option');
+                placeholder.disabled = true;
+                placeholder.selected = true;
+                placeholder.hidden = true;
+                placeholder.textContent = 'Choose a survey';
+                selectEl.appendChild(placeholder);
+
+                // Add survey options
                 surveys.forEach(survey => {
-                    const btn = document.createElement('we-button');
-                    btn.setAttribute('data-value', survey.id);
-                    btn.textContent = `${survey.title || `Survey ${survey.id}`}`;
-                    btn.classList.add('survey-option-btn');
-
-                    btn.addEventListener('click', (e) => {
-                        e.preventDefault();
-
-                        // Clear previous active
-                        selectEl.querySelectorAll('we-button').forEach(b => {
-                            b.classList.remove('active');
-                        });
-
-                        // Highlight selected
-                        btn.classList.add('active');
-
-                        // Save selection
-                        this.changeOption(false, survey.id, btn);
-                        console.log('Survey selected:', survey.title, survey.id);
-                    });
-
-                    selectEl.appendChild(btn);
+                    const option = document.createElement('option');
+                    option.classList.add('survey-option');
+                    option.value = survey.id;
+                    option.textContent = survey.title || `Survey ${survey.id}`;
+                    selectEl.appendChild(option);
                 });
 
-                // Highlight previously selected survey if any
+                // Handle change
+                selectEl.addEventListener('change', (e) => {
+                    const selectedId = e.target.value;
+                    this.changeOption(false, selectedId, null);
+                });
+
+                // Pre-select if already set
                 const selectedId = this.$target.attr('data-sel-survey-id');
                 if (selectedId) {
-                    selectEl.setAttribute('data-value', selectedId);
-                    const selectedBtn = selectEl.querySelector(`we-button[data-value="${selectedId}"]`);
-                    if (selectedBtn) {
-                        selectedBtn.classList.add('active');
-                    }
+                    selectEl.value = selectedId;
+                    placeholder.selected = false;
                 }
 
+                // Append label + dropdown to the wrapper
+                selectWrapper.appendChild(label);
+                selectWrapper.appendChild(selectEl);
+
             } catch (err) {
-                console.error('Failed to load surveys:', err);
+                console.error('⚠️ Failed to load surveys:', err);
             }
         },
 
         changeOption(previewMode, value, $opt) {
             this.$target.attr('data-sel-survey-id', value);
-            console.log('Survey selected:', value);
         }
     });
 });
