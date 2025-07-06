@@ -1,9 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <odoo>
   <template id="external_snippets" inherit_id="website.snippets" priority="8">
     <xpath expr="//div[@id='snippet_structure']//t[@t-snippet][last()]" position="after">
       <t t-snippet="Survey.survey_snippet"
-         data-thumbnail="/Survey/static/description/snippet_thumb.jpg"
-         data-name="Interactive Survey"/>
+         t-thumbnail="Survey/static/src/img/survey.png"
+         t-name="Interactive Survey"/>
     </xpath>
   </template>
 </odoo>
+
+
+<!-- <?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="snippet_survey_snippet" name="Interactive Survey Snippet" inherit_id="website.snippets" priority="20">
+        <xpath expr="//div[@id='snippet_structure']/div[@class='o_panel_body']" position="inside">
+            <t t-snippet="Survey.survey_snippet"
+               t-thumbnail="/Survey/static/src/img/snippet_thumb.jpg"
+               t-name="Interactive Survey"/>
+        </xpath>
+    </template>
+</odoo> -->

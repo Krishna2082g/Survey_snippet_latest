@@ -79,6 +79,7 @@ odoo.define('Survey.survey_snippet', function (require) {
 
         renderQuestion: function () {
             const question = this.data[this.currentIndex];
+            const qType = question.question_type || 'simple_choice';
 
             this.container.innerHTML = `
                 <div class="mx-auto my-5 p-4 shadow rounded bg-white" style="max-width: 800px; width: 100%;">
@@ -96,41 +97,108 @@ odoo.define('Survey.survey_snippet', function (require) {
 
             const optionsDiv = this.container.querySelector('#optionsContainer');
 
-            question.answers.forEach(answer => {
-                const option = document.createElement('div');
-                option.className = 'border rounded p-3 mb-2 w-100';
-                option.style.cursor = 'pointer';
-                option.style.transition = '0.2s';
-                option.textContent = answer.text;
-                option.setAttribute('data-id', answer.id);
+            if (qType === 'simple_choice') {
+                question.answers.forEach(answer => {
+                    const option = document.createElement('div');
+                    option.className = 'border rounded p-3 mb-2 w-100';
+                    option.style.cursor = 'pointer';
+                    option.style.transition = '0.2s';
+                    option.textContent = answer.text;
+                    option.setAttribute('data-id', answer.id);
 
-                if (this.answers[this.currentIndex] === answer.id) {
-                    option.classList.add('bg-primary', 'text-white');
-                }
-
-                option.addEventListener('mouseenter', function () {
-                    if (!this.classList.contains('bg-primary')) {
-                        this.style.backgroundColor = '#f1f1f1';
+                    if (this.answers[this.currentIndex] === answer.id) {
+                        option.classList.add('bg-primary', 'text-white');
                     }
-                });
 
-                option.addEventListener('mouseleave', function () {
-                    if (!this.classList.contains('bg-primary')) {
-                        this.style.backgroundColor = '#fff';
-                    }
-                });
-
-                option.addEventListener('click', () => {
-                    optionsDiv.querySelectorAll('div').forEach(opt => {
-                        opt.classList.remove('bg-primary', 'text-white');
-                        opt.style.backgroundColor = '#fff';
+                    option.addEventListener('mouseenter', function () {
+                        if (!this.classList.contains('bg-primary')) {
+                            this.style.backgroundColor = '#f1f1f1';
+                        }
                     });
-                    option.classList.add('bg-primary', 'text-white');
-                    this.answers[this.currentIndex] = answer.id;
-                });
 
-                optionsDiv.appendChild(option);
-            });
+                    option.addEventListener('mouseleave', function () {
+                        if (!this.classList.contains('bg-primary')) {
+                            this.style.backgroundColor = '#fff';
+                        }
+                    });
+
+                    option.addEventListener('click', () => {
+                        optionsDiv.querySelectorAll('div').forEach(opt => {
+                            opt.classList.remove('bg-primary', 'text-white');
+                            opt.style.backgroundColor = '#fff';
+                        });
+                        option.classList.add('bg-primary', 'text-white');
+                        this.answers[this.currentIndex] = answer.id;
+                    });
+
+                    optionsDiv.appendChild(option);
+                });
+            } else if (qType === 'multiple_choice') {
+                question.answers.forEach(answer => {
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.value = answer.id;
+                    checkbox.className = 'form-check-input me-2';
+                    if ((this.answers[this.currentIndex] || []).includes(answer.id)) {
+                        checkbox.checked = true;
+                    }
+                    checkbox.addEventListener('change', () => {
+                        if (!this.answers[this.currentIndex]) {
+                            this.answers[this.currentIndex] = [];
+                        }
+                        if (checkbox.checked) {
+                            this.answers[this.currentIndex].push(answer.id);
+                        } else {
+                            this.answers[this.currentIndex] = this.answers[this.currentIndex].filter(id => id !== answer.id);
+                        }
+                    });
+                    const label = document.createElement('label');
+                    label.className = 'form-check-label';
+                    label.textContent = answer.text;
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'form-check mb-2';
+                    wrapper.appendChild(checkbox);
+                    wrapper.appendChild(label);
+                    optionsDiv.appendChild(wrapper);
+                });
+            } else if (qType === 'text_box' || qType === 'text_box_multiple_line') {
+                const input = document.createElement(qType === 'text_box' ? 'input' : 'textarea');
+                input.className = 'form-control';
+                input.value = this.answers[this.currentIndex] || '';
+                input.placeholder = 'Your answer here';
+                input.addEventListener('input', () => {
+                    this.answers[this.currentIndex] = input.value;
+                });
+                optionsDiv.appendChild(input);
+            } else if (qType === 'numerical_box') {
+                const input = document.createElement('input');
+                input.type = 'number';
+                input.className = 'form-control';
+                input.value = this.answers[this.currentIndex] || '';
+                input.placeholder = 'Enter a number';
+                input.addEventListener('input', () => {
+                    this.answers[this.currentIndex] = input.value;
+                });
+                optionsDiv.appendChild(input);
+            } else if (qType === 'date') {
+                const input = document.createElement('input');
+                input.type = 'date';
+                input.className = 'form-control';
+                input.value = this.answers[this.currentIndex] || '';
+                input.addEventListener('input', () => {
+                    this.answers[this.currentIndex] = input.value;
+                });
+                optionsDiv.appendChild(input);
+            } else if (qType === 'datetime') {
+                const input = document.createElement('input');
+                input.type = 'datetime-local';
+                input.className = 'form-control';
+                input.value = this.answers[this.currentIndex] || '';
+                input.addEventListener('input', () => {
+                    this.answers[this.currentIndex] = input.value;
+                });
+                optionsDiv.appendChild(input);
+            }
 
             const navButtons = this.container.querySelector('#navButtons');
 
@@ -157,8 +225,9 @@ odoo.define('Survey.survey_snippet', function (require) {
         },
 
         nextQuestion: function () {
-            if (this.answers[this.currentIndex] === undefined) {
-                alert('Please select an answer before continuing.');
+            const answer = this.answers[this.currentIndex];
+            if (answer === undefined || answer === null || (Array.isArray(answer) && answer.length === 0)) {
+                alert('Please answer before continuing.');
                 return;
             }
 

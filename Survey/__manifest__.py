@@ -4,7 +4,6 @@
     "category": "Website",
     "summary": "Interactive survey snippet with one question at a time",
     "description": "Adds an interactive survey snippet to the website editor that displays one question at a time with navigation.",
-    # 'depends': ['website', 'sale', 'website_payment', 'website_mail', 'portal_rating', 'digest'],
     "depends": ["website", "survey", "web_editor"],
     "license": "LGPL-3",
     "data": [
