@@ -161,8 +161,8 @@ odoo.define('Survey.survey_snippet', function (require) {
                     wrapper.appendChild(label);
                     optionsDiv.appendChild(wrapper);
                 });
-            } else if (qType === 'text_box' || qType === 'text_box_multiple_line') {
-                const input = document.createElement(qType === 'text_box' ? 'input' : 'textarea');
+            } else if (qType === 'text_box' || qType === 'text_box_multiple_line' || qType === 'char_box') {
+                const input = document.createElement(qType === 'char_box' ? 'input' : 'textarea');
                 input.className = 'form-control';
                 input.value = this.answers[this.currentIndex] || '';
                 input.placeholder = 'Your answer here';
@@ -170,14 +170,20 @@ odoo.define('Survey.survey_snippet', function (require) {
                     this.answers[this.currentIndex] = input.value;
                 });
                 optionsDiv.appendChild(input);
-            } else if (qType === 'numerical_box') {
+            }  else if (qType === 'numerical_box') {
                 const input = document.createElement('input');
                 input.type = 'number';
                 input.className = 'form-control';
                 input.value = this.answers[this.currentIndex] || '';
                 input.placeholder = 'Enter a number';
                 input.addEventListener('input', () => {
-                    this.answers[this.currentIndex] = input.value;
+                    // Store as string but validate it's a valid number
+                    const value = input.value.trim();
+                    if (value === '') {
+                        this.answers[this.currentIndex] =null;
+                    } else if (!isNaN(value)) {
+                        this.answers[this.currentIndex] = parseFloat(value);
+                    }
                 });
                 optionsDiv.appendChild(input);
             } else if (qType === 'date') {
