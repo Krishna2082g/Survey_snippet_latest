@@ -7,10 +7,10 @@ _logger = logging.getLogger(__name__)
 
 class SurveySnippetController(http.Controller):
 
-    @http.route("/survey_snippet/data", type="json", auth="public", website=True)
+    @http.route("/survey_snippet/data", type="json", auth="public", website=True)  #see this
     def get_surveys(self):
         try:
-            surveys = request.env["survey.survey"].sudo().search([])
+            surveys = request.env["survey.survey"].sudo().search([]) #see this 
             data = []
             for survey in surveys:
                 questions = []
@@ -21,7 +21,7 @@ class SurveySnippetController(http.Controller):
                             "text": question.title,
                             "question_type": question.question_type or "simple_choice",
                             "answers": [
-                                {"id": a.id, "text": a.value}
+                                {"id": a.id, "text": a.value}    #see this
                                 for a in question.suggested_answer_ids
                             ],
                         }
@@ -51,19 +51,19 @@ class SurveySnippetController(http.Controller):
             _logger.error("Error fetching survey list: %s", str(e))
             return {"error": str(e)}
 
-    @http.route(
+    @http.route(# see this
         "/survey_snippet/submit",
         type="json",
         auth="public",
         methods=["POST"],
         website=True,
     )
-    def submit_survey(self, survey_id=None, answers=None, **kwargs):
+    def submit_survey(self, survey_id=None, answers=None, **kwargs):#see this
         if not survey_id or answers is None:
             return {"error": "Missing survey_id or answers"}
 
         try:
-            survey = request.env["survey.survey"].sudo().browse(int(survey_id))
+            survey = request.env["survey.survey"].sudo().browse(int(survey_id))#see this
             if not survey.exists():
                 return {"error": "Invalid survey_id"}
 
@@ -78,7 +78,7 @@ class SurveySnippetController(http.Controller):
                 )
             )
 
-            for question_index_str, value in answers.items():
+            for question_index_str, value in answers.items():  #see this
                 try:
                     question_index = int(question_index_str)
                     if question_index >= len(survey.question_ids):
@@ -105,7 +105,7 @@ class SurveySnippetController(http.Controller):
 
                     elif q_type == "multiple_choice":
                         for ans_id in value:
-                            answer = question.suggested_answer_ids.filtered(
+                            answer = question.suggested_answer_ids.filtered(   #see this
                                 lambda a: a.id == ans_id
                             )
                             if answer:
@@ -119,7 +119,7 @@ class SurveySnippetController(http.Controller):
                                     }
                                 )
 
-                    elif q_type in ["text_box", "text_box_multiple_line", "char_box"]:
+                    elif q_type in ["text_box", "text_box_multiple_line", "char_box"]:      #see this
                         if value:
                             request.env["survey.user_input.line"].sudo().create(
                                 {
@@ -167,8 +167,6 @@ class SurveySnippetController(http.Controller):
                                     formatted_value=value.replace("T"," ")
                                     if len(formatted_value) == 16:
                                         formatted_value +=":00"
-                                   
-                            
                                 
                                     request.env["survey.user_input.line"].sudo().create(
                                 {
